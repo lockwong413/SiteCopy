@@ -100,9 +100,9 @@ def GetUrlPart(url, part = ""):
 		return parsed.path[:parsed.path.rfind("/") + 1]
 	elif part == "completedomain":
 		return (parsed.scheme + "://" + parsed.netloc)
-	elif part == "filename": 
+	elif part == "filename":
 		return parsed.path[parsed.path.rfind("/") + 1:]
-	elif part == "filesuffix": 
+	elif part == "filesuffix":
 		temp = parsed.path[parsed.path.rfind("/") + 1:]
 		if temp.find(".") == -1: return ""
 		return temp[temp.find("."):]
@@ -111,12 +111,12 @@ def GetUrlPart(url, part = ""):
 
 def ProcessResourcePath(pages_url, source_url):
 	""" Handle the relationship between relative paths and absolute paths, and give replacement results and save paths """
-	
+
 	source_download_url = ""
 	processed_source_url = ""
 	source_save_path = ""
 	source_url_kind = 0
-	
+
 	relative_path = ""
 	url_path = GetUrlPart(pages_url, "completepath")
 	for i in range(url_path.count("/") - 1):
@@ -225,7 +225,7 @@ def ExtractLinks(url, lable_name, attribute_name):
 		lable_attribute = lable.get(attribute_name)
 		if lable_attribute == None or lable_attribute == "": continue
 		lable_attribute = lable_attribute.strip()
-		if IfBlackName(single_black_names, lable_attribute): continue 
+		if IfBlackName(single_black_names, lable_attribute): continue
 		if IfBlackName(starts_black_names, lable_attribute, 3): continue
 		if lable_attribute not in old_links:
 			old_links.append(lable_attribute)
@@ -273,10 +273,10 @@ def SaveSinglePage(page_url):
 	domain_path = domain.replace(".", "_")
 	processed_page_url = ProcessLink("http://" + domain, page_url, True)
 	page_save_path = "website/" + domain_path + "/" + GetUrlPart(processed_page_url, "path")
-	if os.path.exists(page_save_path) == True: 
+	if os.path.exists(page_save_path) == True:
 		print("[Info] - " + page_url + " Downloaded")
 		return None
-	print("[Processing] - " + page_url)	
+	print("[Processing] - " + page_url)
 	links_js = ExtractLinks(page_url, "script", "src")
 	links_css = ExtractLinks(page_url, "link", "href")
 	links_img = ExtractLinks(page_url, "img", "src")
@@ -321,7 +321,7 @@ def SaveSinglePage(page_url):
 def CollectUrls(page_url):
 	filename_black_names = [":", "?", "'", '"', "<", ">", "|"]
 	black_suffix_str = ".tgz|.jar|.so|.docx|.py|.js|.css|.jpg|.jpeg|.png|.gif|.bmp|.pic|.tif|.txt|.doc|.hlp|.wps|.rtf|.pdf|.rar|.zip|.gz|.arj|.z|.wav|.aif|.au|.mp3|.ram|.wma|.mmf|.amr|.aac|.flac|.avi|.mpg|.mov|.swf|.int|.sys|.dll|.adt|.exe|.com|.c|.asm|.for|.lib|.lst|.msg|.obj|.pas|.wki|.bas|.map|.bak|.tmp|.dot|.bat|.cmd|.com"
-	black_suffix = black_suffix_str.split("|")	
+	black_suffix = black_suffix_str.split("|")
 	links_a = ExtractLinks(page_url, "a", "href")
 	result = []
 	for link in links_a:
@@ -341,14 +341,14 @@ async def coroutine_execution(function, param1):
 	注意：functools.partial调用的参数应与目标函数一致
 	"""
 	loop = asyncio.get_event_loop()
-	result = await loop.run_in_executor(None,functools.partial(function, page_url=param1)) 
+	result = await loop.run_in_executor(None,functools.partial(function, page_url=param1))
 	# result为目标函数返回的值
 	return result
 
 def coroutine_init(function, parameters, threads):
 	"""
 	处理线程
-	coroutine_execution()调用协程函数，可自行修改参数个数内容等。 
+	coroutine_execution()调用协程函数，可自行修改参数个数内容等。
 	"""
 	times = int(len(parameters) / threads) + 1
 	if len(parameters) == threads or int(len(parameters) % threads) == 0: times -= 1
@@ -389,7 +389,7 @@ def ExtractUrls(main_url, depth = 200, threads = 30):
 		if len(copy_urls) == len(collected_urls): break
 		not_extracted_urls = []
 		for url in copy_urls:
-			if url not in collected_urls: 
+			if url not in collected_urls:
 				not_extracted_urls.append(url)
 		results = coroutine_init(CollectUrls, parameters=not_extracted_urls, threads=threads)
 		collected_urls.extend(not_extracted_urls)
